@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Diderot Design System - Minimalist, elegant, black & white */
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 8%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 8%;
+
+    --primary: 0 0% 8%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 8%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 8%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 8%;
+
+    --radius: 0.5rem;
+
+    /* Custom Diderot tokens */
+    --diderot-cream: 40 33% 97%;
+    --diderot-gold: 45 100% 50%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 25%;
+    --sidebar-primary: 0 0% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 95%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 91%;
+    --sidebar-ring: 0 0% 8%;
+
+    /* Admin Dashboard tokens - Light Mode */
+    --admin-background: 220 14% 96%;
+    --admin-foreground: 222 47% 11%;
+    --admin-sidebar: 0 0% 100%;
+    --admin-sidebar-foreground: 215 20% 25%;
+    --admin-accent: 217 19% 92%;
+    --admin-accent-foreground: 222 47% 11%;
+    --admin-border: 217 19% 88%;
+    --admin-muted: 215 16% 55%;
+    --admin-success: 142 76% 36%;
+    --admin-warning: 38 92% 50%;
+    --admin-error: 0 84% 60%;
+    --admin-info: 200 98% 39%;
+  }
+
+  .dark {
+    --background: 222 47% 5%;
+    --foreground: 210 40% 95%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 95%;
+
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 95%;
+
+    --primary: 210 40% 95%;
+    --primary-foreground: 222 47% 8%;
+
+    --secondary: 217 19% 15%;
+    --secondary-foreground: 210 40% 95%;
+
+    --muted: 217 19% 15%;
+    --muted-foreground: 215 16% 60%;
+
+    --accent: 217 19% 15%;
+    --accent-foreground: 210 40% 95%;
+
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 210 40% 95%;
+
+    --border: 217 19% 20%;
+    --input: 217 19% 20%;
+    --ring: 210 40% 85%;
+
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 40% 95%;
+    --sidebar-primary: 210 40% 90%;
+    --sidebar-primary-foreground: 222 47% 10%;
+    --sidebar-accent: 217 19% 15%;
+    --sidebar-accent-foreground: 210 40% 95%;
+    --sidebar-border: 217 19% 15%;
+    --sidebar-ring: 210 40% 85%;
+
+    /* Admin Dashboard tokens - Dark Mode */
+    --admin-background: 222 47% 5%;
+    --admin-foreground: 210 40% 95%;
+    --admin-sidebar: 222 47% 8%;
+    --admin-sidebar-foreground: 210 40% 95%;
+    --admin-accent: 217 19% 15%;
+    --admin-accent-foreground: 210 40% 95%;
+    --admin-border: 217 19% 18%;
+    --admin-muted: 215 16% 60%;
+    --admin-success: 142 76% 42%;
+    --admin-warning: 38 92% 55%;
+    --admin-error: 0 84% 55%;
+    --admin-info: 200 98% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans;
+  }
+}
+
+@layer components {
+  .product-card {
+    @apply bg-card rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg;
+  }
+
+  .category-tag {
+    @apply inline-flex items-center px-2 py-0.5 text-xs font-medium bg-secondary text-secondary-foreground rounded-full;
+  }
+
+  .tab-active {
+    @apply border-b-2 border-foreground text-foreground;
+  }
+
+  .tab-inactive {
+    @apply border-b-2 border-transparent text-muted-foreground hover:text-foreground transition-colors;
+  }
+
+  /* Responsive table to cards */
+  .responsive-table-card {
+    @apply p-4 rounded-lg border bg-card;
+  }
+
+  /* Hide scrollbar but keep scroll functionality */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
