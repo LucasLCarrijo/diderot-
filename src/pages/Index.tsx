@@ -75,9 +75,12 @@ export default function Index() {
 
       {/* Hero Section - Full Bleed */}
       <section className="relative h-[85vh] min-h-[600px] overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${heroImage})` }}
+        <img
+          src={heroImage}
+          alt=""
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/45" />
 
@@ -149,6 +152,8 @@ export default function Index() {
                     src={card.image}
                     alt={card.title}
                     loading="lazy"
+                    width={400}
+                    height={500}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
@@ -196,12 +201,16 @@ export default function Index() {
                   <Link
                     to={`/${creator.username}`}
                     className="block group"
+                    aria-label={`Ver perfil de ${creator.name || 'Creator'}`}
                   >
                     <div className="aspect-square rounded-xl overflow-hidden bg-[#F5F5F5] mb-3">
                       {creator.avatar_url ? (
                         <img
                           src={creator.avatar_url}
-                          alt={creator.name}
+                          alt={`Foto de ${creator.name || 'Creator'}`}
+                          loading="lazy"
+                          width={200}
+                          height={200}
                           className="w-full h-full object-cover rounded-xl transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
@@ -248,11 +257,14 @@ export default function Index() {
 
       {/* Mid-Page CTA Section */}
       <section className="relative py-16 sm:py-24 lg:py-32 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${midSectionImage})` }}
+        <img
+          src={midSectionImage}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0" />
+        <div className="absolute inset-0 bg-black/30" />
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-sans font-medium text-white leading-tight">
@@ -315,12 +327,15 @@ export default function Index() {
                   <Link
                     to={`/discover/${category.slug}`}
                     className="block group"
+                    aria-label={`Ver categoria ${category.name}`}
                   >
                     <div className="aspect-[3/4] rounded-2xl overflow-hidden bg-[#F5F5F5] mb-4">
                       <img
                         src={category.image}
-                        alt={category.name}
+                        alt={`Categoria ${category.name}`}
                         loading="lazy"
+                        width={300}
+                        height={400}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
@@ -362,12 +377,15 @@ export default function Index() {
                   <Link
                     to="#"
                     className="block group relative"
+                    aria-label={`Ver coleção ${collection.name}`}
                   >
                     <div className="aspect-[3/4] rounded-2xl overflow-hidden relative">
                       <img
                         src={collection.image}
-                        alt={collection.name}
+                        alt={`Coleção ${collection.name}`}
                         loading="lazy"
+                        width={300}
+                        height={400}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-2xl pointer-events-none" />
@@ -386,12 +404,15 @@ export default function Index() {
                   <Link
                     to="#"
                     className="block group relative"
+                    aria-label={`Ver coleção ${collection.name}`}
                   >
                     <div className="aspect-[3/4] rounded-2xl overflow-hidden relative">
                       <img
                         src={collection.image}
-                        alt={collection.name}
+                        alt={`Coleção ${collection.name}`}
                         loading="lazy"
+                        width={300}
+                        height={400}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-2xl pointer-events-none" />
@@ -413,11 +434,14 @@ export default function Index() {
 
       {/* Final CTA Section */}
       <section className="relative py-16 sm:py-24 lg:py-32 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${finalSectionImage})` }}
+        <img
+          src={finalSectionImage}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0" />
+        <div className="absolute inset-0 bg-black/30" />
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-sans font-medium text-white leading-tight">
