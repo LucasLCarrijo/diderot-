@@ -150,7 +150,7 @@ export function ReportGeneratorModal({ open, onOpenChange }: ReportGeneratorModa
     }
 
     setIsGenerating(true);
-    
+
     try {
       // Build request payload
       const payload = {
@@ -179,13 +179,13 @@ export function ReportGeneratorModal({ open, onOpenChange }: ReportGeneratorModa
       // Generate file based on format
       switch (format) {
         case "pdf":
-          generatePDF(reportData, selectedTypes);
+          await generatePDF(reportData, selectedTypes);
           break;
         case "csv":
           generateCSV(reportData, selectedTypes);
           break;
         case "excel":
-          generateExcel(reportData, selectedTypes);
+          await generateExcel(reportData, selectedTypes);
           break;
         case "json":
           generateJSON(reportData);
@@ -193,7 +193,7 @@ export function ReportGeneratorModal({ open, onOpenChange }: ReportGeneratorModa
       }
 
       toast.success(`Relatório ${format.toUpperCase()} gerado com sucesso!`);
-      
+
       if (options.sendEmail && emailRecipient) {
         toast.info(`Funcionalidade de envio por email será implementada em breve`);
       }

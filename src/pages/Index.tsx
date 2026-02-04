@@ -19,16 +19,16 @@ import heroImage from "@/assets/landing-hero.webp";
 import card1Image from "@/assets/Sect1diderot.webp";
 import card2Image from "@/assets/Sect2diderot.webp";
 import card3Image from "@/assets/Sect3diderot.webp";
-import midSectionImage from "@/assets/landing-mid-section.jpg";
-import finalSectionImage from "@/assets/landing-mid-section2.jpg";
-import categoryJeans from "@/assets/category-jeans.jpg";
-import categorySandals from "@/assets/category-sandals.jpg";
-import categoryBlazers from "@/assets/category-blazers.jpg";
-import categorySneakers from "@/assets/category-sneakers.jpg";
-import categoryJewelry from "@/assets/category-jewelry.jpg";
-import collection1 from "@/assets/collection-1.jpg";
-import collection2 from "@/assets/collection-2.jpg";
-import collection3 from "@/assets/collection-3.jpg";
+import midSectionImage from "@/assets/landing-mid-section.webp";
+import finalSectionImage from "@/assets/landing-mid-section2.webp";
+import categoryJeans from "@/assets/category-jeans.webp";
+import categorySandals from "@/assets/category-sandals.webp";
+import categoryBlazers from "@/assets/category-blazers.webp";
+import categorySneakers from "@/assets/category-sneakers.webp";
+import categoryJewelry from "@/assets/category-jewelry.webp";
+import collection1 from "@/assets/collection-1.webp";
+import collection2 from "@/assets/collection-2.webp";
+import collection3 from "@/assets/collection-3.webp";
 
 const CATEGORIES = [
   { name: "Jeans", slug: "jeans", image: categoryJeans },
@@ -57,7 +57,7 @@ export default function Index() {
     queryFn: async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("id, username, name, avatar_url, bio, is_verified")
+        .select("id,username,name,avatar_url")
         .limit(8);
       return data || [];
     },

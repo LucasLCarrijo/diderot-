@@ -1,6 +1,5 @@
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import * as XLSX from "xlsx";
+// Dynamic imports - these heavy libraries will only load when generatePDF or generateExcel is called
+// This prevents them from being included in the initial bundle
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -108,7 +107,13 @@ function calculateDelta(current: number, previous: number): string {
   return `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}%`;
 }
 
-export function generatePDF(data: ReportData, selectedTypes: string[]): void {
+export async function generatePDF(data: ReportData, selectedTypes: string[]): Promise<void> {
+  // Dynamic imports - only loaded when this function is called
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import("jspdf"),
+    import("jspdf-autotable")
+  ]);
+
   const doc = new jsPDF();
   let yPos = 20;
 
@@ -339,7 +344,7 @@ export function generatePDF(data: ReportData, selectedTypes: string[]): void {
 
 export function generateCSV(data: ReportData, selectedTypes: string[]): void {
   const rows: string[][] = [];
-  
+
   rows.push(["Diderot - Relatório"]);
   rows.push([`Período: ${formatDate(data.period.start)} - ${formatDate(data.period.end)}`]);
   rows.push([`Gerado em: ${formatDate(data.generatedAt)}`]);
@@ -425,7 +430,10 @@ export function generateCSV(data: ReportData, selectedTypes: string[]): void {
   link.click();
 }
 
-export function generateExcel(data: ReportData, selectedTypes: string[]): void {
+export async function generateExcel(data: ReportData, selectedTypes: string[]): Promise<void> {
+  // Dynamic import - only loaded when this function is called
+  const XLSX = await import("xlsx");
+
   const workbook = XLSX.utils.book_new();
 
   // Summary sheet
