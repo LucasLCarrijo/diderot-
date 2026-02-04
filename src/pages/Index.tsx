@@ -51,7 +51,7 @@ export default function Index() {
     setIsVisible(true);
   }, []);
 
-  // Fetch featured creators
+  // Fetch featured creators with caching
   const { data: featuredCreators } = useQuery({
     queryKey: ["featured-creators"],
     queryFn: async () => {
@@ -61,6 +61,8 @@ export default function Index() {
         .limit(8);
       return data || [];
     },
+    staleTime: 1000 * 60 * 60, // 1 hour - data changes infrequently
+    gcTime: 1000 * 60 * 60 * 24, // 24 hours cache
   });
 
   const scrollToCreators = () => {
@@ -146,6 +148,7 @@ export default function Index() {
                   <img
                     src={card.image}
                     alt={card.title}
+                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
@@ -317,6 +320,7 @@ export default function Index() {
                       <img
                         src={category.image}
                         alt={category.name}
+                        loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
@@ -363,6 +367,7 @@ export default function Index() {
                       <img
                         src={collection.image}
                         alt={collection.name}
+                        loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-2xl pointer-events-none" />
@@ -386,6 +391,7 @@ export default function Index() {
                       <img
                         src={collection.image}
                         alt={collection.name}
+                        loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent rounded-2xl pointer-events-none" />
