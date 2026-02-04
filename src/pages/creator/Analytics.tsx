@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { subDays, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { 
-  MousePointer2, 
-  TrendingUp, 
-  Heart, 
+import {
+  MousePointer2,
+  TrendingUp,
+  Heart,
   Download,
   Smartphone,
   Monitor,
@@ -56,12 +56,14 @@ const DEVICE_ICONS = {
 };
 
 export default function Analytics() {
-  const { hasCreatorPro, isLoading: isLoadingEntitlements } = useEntitlements();
+  const { hasFeature, isLoading: isLoadingEntitlements } = useEntitlements();
+  const hasAnalyticsAccess = hasFeature('analytics');
+
   const [dateRange, setDateRange] = useState<DateRange>({
     from: subDays(new Date(), 30),
     to: new Date(),
   });
-  
+
   const {
     totalClicks,
     clicksOverTime,
@@ -70,12 +72,12 @@ export default function Analytics() {
     utmStats,
     isLoading,
   } = useCreatorAnalytics(dateRange);
-  
+
   const handleExportCSV = () => {
     const headers = ["Data", "Cliques"];
     const rows = clicksOverTime.map(d => [d.date, d.clicks.toString()]);
     const csvContent = [headers, ...rows].map(r => r.join(",")).join("\n");
-    
+
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -84,8 +86,8 @@ export default function Analytics() {
     a.click();
     URL.revokeObjectURL(url);
   };
-  
-  if (!isLoadingEntitlements && !hasCreatorPro) {
+
+  if (!isLoadingEntitlements && !hasAnalyticsAccess) {
     return (
       <CreatorLayout title="Analytics" description="Acompanhe o desempenho dos seus produtos">
         <Paywall
@@ -130,7 +132,7 @@ export default function Analytics() {
               Acompanhe o desempenho dos seus produtos
             </p>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <DateRangePicker value={dateRange} onChange={setDateRange} />
             <Button variant="outline" size="icon" onClick={handleExportCSV}>
@@ -138,7 +140,7 @@ export default function Analytics() {
             </Button>
           </div>
         </div>
-        
+
         {/* Overview Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
@@ -154,7 +156,7 @@ export default function Analytics() {
               )}
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Produtos</CardTitle>
@@ -168,7 +170,7 @@ export default function Analytics() {
               )}
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Favoritos</CardTitle>
@@ -184,7 +186,7 @@ export default function Analytics() {
               )}
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Principal Fonte</CardTitle>
@@ -201,7 +203,7 @@ export default function Analytics() {
             </CardContent>
           </Card>
         </div>
-        
+
         {/* Clicks Over Time Chart */}
         <Card>
           <CardHeader>
@@ -214,23 +216,23 @@ export default function Analytics() {
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={clicksOverTime}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis 
-                    dataKey="date" 
+                  <XAxis
+                    dataKey="date"
                     tickFormatter={(date) => format(new Date(date), "dd/MM", { locale: ptBR })}
                     className="text-xs"
                   />
                   <YAxis className="text-xs" />
-                  <Tooltip 
+                  <Tooltip
                     labelFormatter={(date) => format(new Date(date), "dd 'de' MMMM", { locale: ptBR })}
-                    contentStyle={{ 
+                    contentStyle={{
                       backgroundColor: "hsl(var(--card))",
                       border: "1px solid hsl(var(--border))",
                       borderRadius: "var(--radius)",
                     }}
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="clicks" 
+                  <Line
+                    type="monotone"
+                    dataKey="clicks"
                     stroke="hsl(var(--primary))"
                     strokeWidth={2}
                     dot={false}
@@ -241,7 +243,7 @@ export default function Analytics() {
             )}
           </CardContent>
         </Card>
-        
+
         {/* Device and UTM Charts */}
         <div className="grid gap-4 lg:grid-cols-2">
           <Card>
@@ -265,8 +267,8 @@ export default function Analytics() {
                         outerRadius={60}
                       >
                         {deviceStats.map((entry, index) => (
-                          <Cell 
-                            key={`cell-${index}`} 
+                          <Cell
+                            key={`cell-${index}`}
                             fill={DEVICE_COLORS[entry.device as keyof typeof DEVICE_COLORS] || DEVICE_COLORS.unknown}
                           />
                         ))}
@@ -295,7 +297,7 @@ export default function Analytics() {
               )}
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>Fontes de Tráfego</CardTitle>
@@ -308,8 +310,8 @@ export default function Analytics() {
                   <BarChart data={utmStats.slice(0, 5)} layout="vertical">
                     <XAxis type="number" className="text-xs" />
                     <YAxis type="category" dataKey="source" className="text-xs capitalize" width={80} />
-                    <Tooltip 
-                      contentStyle={{ 
+                    <Tooltip
+                      contentStyle={{
                         backgroundColor: "hsl(var(--card))",
                         border: "1px solid hsl(var(--border))",
                         borderRadius: "var(--radius)",
@@ -326,7 +328,7 @@ export default function Analytics() {
             </CardContent>
           </Card>
         </div>
-        
+
         {/* Top Products Table */}
         <Card>
           <CardHeader>
