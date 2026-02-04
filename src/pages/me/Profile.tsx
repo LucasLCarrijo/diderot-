@@ -35,13 +35,12 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function Profile() {
-  const { user, userRoles, hasRole, switchRole } = useAuth();
+  const { user, userRoles, hasRole } = useAuth();
   const { loading } = useRequireAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: profile, isLoading: profileLoading } = useMyProfile();
   const updateProfile = useUpdateProfile();
-  const [isSwitchingRole, setIsSwitchingRole] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -93,7 +92,7 @@ export default function Profile() {
     setValue("avatar_url", url, { shouldDirty: true });
   };
 
-  const handleBecomeCreator = async () => {
+  const handleBecomeCreator = () => {
     // Check if profile is complete first
     const currentName = watch("name");
     const currentUsername = watch("username");
@@ -103,13 +102,8 @@ export default function Profile() {
       return;
     }
 
-    setIsSwitchingRole(true);
-    const { error } = await switchRole("creator");
-    setIsSwitchingRole(false);
-
-    if (!error) {
-      navigate("/creator/shop");
-    }
+    // Redirect to onboarding flow (quiz → plan → checkout)
+    navigate("/onboarding/segmentation");
   };
 
   if (loading || profileLoading) {
@@ -252,8 +246,8 @@ export default function Profile() {
               <span className="text-sm text-muted-foreground">Seus papéis:</span>
               {userRoles.length > 0 ? (
                 userRoles.map((role) => (
-                  <Badge 
-                    key={role} 
+                  <Badge
+                    key={role}
                     variant={role === "creator" ? "default" : "secondary"}
                     className="capitalize"
                   >
@@ -278,19 +272,11 @@ export default function Profile() {
                       Compartilhe produtos e ganhe com links de afiliado
                     </p>
                   </div>
-                  <Button 
+                  <Button
                     onClick={handleBecomeCreator}
-                    disabled={isSwitchingRole}
                     className="whitespace-nowrap"
                   >
-                    {isSwitchingRole ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Processando...
-                      </>
-                    ) : (
-                      "Virar Creator"
-                    )}
+                    Virar Creator
                   </Button>
                 </div>
               </div>
@@ -299,8 +285,8 @@ export default function Profile() {
             {/* Creator Dashboard Link */}
             {isCreator && (
               <div className="mt-4">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => navigate("/creator/shop")}
                   className="gap-2"
                 >
@@ -365,8 +351,8 @@ export default function Profile() {
       </div>
 
       <ChangePasswordModal open={showPasswordModal} onOpenChange={setShowPasswordModal} />
-      <DeleteAccountModal 
-        open={showDeleteModal} 
+      <DeleteAccountModal
+        open={showDeleteModal}
         onOpenChange={setShowDeleteModal}
         isCreator={isCreator}
       />

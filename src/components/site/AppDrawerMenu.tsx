@@ -111,9 +111,9 @@ export function AppDrawerMenu({
         {/* Account Section */}
         {!isLoading && user && (
           <div className="mb-6">
-          <p className="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
-            Minha Conta
-          </p>
+            <p className="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+              Minha Conta
+            </p>
             <div className="space-y-1">
               <SheetClose asChild>
                 <Link
@@ -160,7 +160,7 @@ export function AppDrawerMenu({
               {!isCreator ? (
                 <SheetClose asChild>
                   <Link
-                    to="/onboarding/creator"
+                    to="/onboarding/segmentation"
                     className="flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors text-muted-foreground hover:bg-muted hover:text-foreground"
                   >
                     <Sparkles className="h-5 w-5" />
