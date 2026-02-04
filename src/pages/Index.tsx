@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { optimizeImage } from "@/lib/imageOptimization";
+import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import logoLight from "@/assets/logo-diderot-white.svg";
 import {
@@ -45,7 +46,14 @@ const COLLECTIONS = [
 ];
 
 export default function Index() {
-  // Fetch featured creators with caching
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsReady(true), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Fetch featured creators with caching - deferred to prioritize LCP
   const { data: featuredCreators } = useQuery({
     queryKey: ["featured-creators"],
     queryFn: async () => {
@@ -55,8 +63,9 @@ export default function Index() {
         .limit(8);
       return data || [];
     },
-    staleTime: 1000 * 60 * 60, // 1 hour - data changes infrequently
-    gcTime: 1000 * 60 * 60 * 24, // 24 hours cache
+    enabled: isReady,
+    staleTime: 1000 * 60 * 60, // 1 hour
+    gcTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   const scrollToCreators = () => {
