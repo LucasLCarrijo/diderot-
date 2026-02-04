@@ -1,7 +1,7 @@
 // Stripe Price IDs
 export const STRIPE_PRICES = {
-  CREATOR_PRO_MONTHLY: 'price_1SfM5cKjrStn4RhpDmL1KYxa',
-  CREATOR_PRO_YEARLY: 'price_1Sj20nKjrStn4RhptVBDGbQV',
+  CREATOR_PRO_MONTHLY: import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID || 'price_1SfM5cKjrStn4RhpDmL1KYxa',
+  CREATOR_PRO_YEARLY: import.meta.env.VITE_STRIPE_ANNUAL_PRICE_ID || 'price_1Sj20nKjrStn4RhptVBDGbQV',
 } as const;
 
 // Plan definitions
@@ -51,11 +51,11 @@ export const PLANS = {
   },
   CREATOR_PRO_YEARLY: {
     id: 'creator_pro_yearly',
-    name: 'Creator Pro',
-    price: 499.00,
+    name: 'Creator Pro Anual',
+    price: 299.90,
     interval: 'year' as const,
     stripePriceId: STRIPE_PRICES.CREATOR_PRO_YEARLY,
-    savings: 'Economize 17%',
+    savings: 'Economize 20%',
     features: {
       maxProducts: Infinity,
       maxCollections: Infinity,
@@ -66,10 +66,11 @@ export const PLANS = {
     },
     featureList: [
       'Tudo do plano mensal',
-      '2 meses grátis',
+      'Economize R$ 59,00 por ano',
       'Acesso antecipado a features',
     ],
   },
 } as const;
 
 export type PlanId = keyof typeof PLANS;
+

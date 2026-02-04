@@ -10,6 +10,7 @@ import {
   Download,
   Copy,
   SlidersHorizontal,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -462,9 +463,8 @@ export default function Shop() {
       {/* Products Grid/List */}
       {isLoading ? (
         <div
-          className={`grid gap-3 sm:gap-4 ${
-            viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
-          }`}
+          className={`grid gap-3 sm:gap-4 ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
+            }`}
         >
           {[...Array(6)].map((_, i) => (
             <div key={i} className="rounded-xl border bg-card overflow-hidden">
@@ -478,9 +478,8 @@ export default function Shop() {
         </div>
       ) : sortedProducts.length > 0 ? (
         <div
-          className={`grid gap-3 sm:gap-4 ${
-            viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
-          }`}
+          className={`grid gap-3 sm:gap-4 ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
+            }`}
         >
           {sortedProducts.map((product) => (
             <div key={product.id} className="relative">
@@ -506,27 +505,71 @@ export default function Shop() {
           ))}
         </div>
       ) : (
-        <div className="border border-dashed border-border rounded-lg py-16 text-center">
-          <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-medium mb-2">
-            {hasActiveFilters ? "Nenhum produto encontrado" : "Nenhum produto ainda"}
-          </h3>
-          <p className="text-muted-foreground mb-6">
-            {hasActiveFilters
-              ? "Tente ajustar os filtros ou limpar todos"
-              : "Comece adicionando produtos que você recomenda"}
-          </p>
+        <div className="border border-dashed border-border rounded-xl py-12 px-6 flex flex-col items-center text-center bg-secondary/5">
           {hasActiveFilters ? (
-            <Button variant="outline" onClick={clearFilters}>
-              Limpar filtros
-            </Button>
+            <>
+              <Package className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium mb-2">Nenhum produto encontrado</h3>
+              <p className="text-muted-foreground mb-6">Tente ajustar os filtros ou limpar todos.</p>
+              <Button variant="outline" onClick={clearFilters}>Limpar filtros</Button>
+            </>
           ) : (
-            <Button asChild disabled={!canCreate}>
-              <Link to="/creator/shop/new">
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar Produto
-              </Link>
-            </Button>
+            <div className="max-w-md w-full space-y-6">
+              <div className="space-y-2">
+                <span className="text-4xl">🚀</span>
+                <h3 className="text-2xl font-bold">Bem-vindo ao seu QG!</h3>
+                <p className="text-muted-foreground">
+                  Siga os passos para começar a monetizar sua audiência.
+                </p>
+              </div>
+
+              <div className="bg-background border rounded-lg p-4 text-left space-y-4 shadow-sm">
+                <div className="flex items-start gap-3 opacity-50">
+                  <div className="bg-green-100 text-green-700 rounded-full h-6 w-6 flex items-center justify-center shrink-0 text-xs">
+                    <Check className="h-3 w-3" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium line-through text-muted-foreground">Criar conta Creator</h4>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="bg-primary/10 text-primary rounded-full h-6 w-6 flex items-center justify-center shrink-0 text-xs font-bold ring-2 ring-primary/20">
+                    2
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium">Adicionar seu primeiro produto</h4>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Recomende um produto de afiliado, digital ou link.
+                    </p>
+                    <Button asChild size="sm" className="w-full sm:w-auto">
+                      <Link to="/creator/shop/new">
+                        <Plus className="h-3 w-3 mr-2" />
+                        Adicionar Produto
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 opacity-50">
+                  <div className="bg-muted text-muted-foreground rounded-full h-6 w-6 flex items-center justify-center shrink-0 text-xs font-bold border">
+                    3
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Personalizar sua página</h4>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 opacity-50">
+                  <div className="bg-muted text-muted-foreground rounded-full h-6 w-6 flex items-center justify-center shrink-0 text-xs font-bold border">
+                    4
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Publicar e compartilhar</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       )}

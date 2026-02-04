@@ -65,58 +65,30 @@ export default function PricingPage() {
             <Sparkles className="h-5 w-5" />
             <span className="font-medium">Planos e Preços</span>
           </div>
-          
+
           <h1 className="text-4xl font-bold tracking-tight mb-4">
             Escolha o plano ideal para você
           </h1>
-          
+
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Comece grátis e faça upgrade quando precisar. Todos os planos incluem 7 dias de teste grátis.
+            Todos os planos incluem 7 dias de teste grátis. Cancele quando quiser.
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {/* FREE PLAN */}
-          <Card className="relative">
-            <CardHeader>
-              <CardTitle className="text-xl">Free</CardTitle>
-              <CardDescription>Para começar</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-6">
-                <span className="text-4xl font-bold">R$ 0</span>
-                <span className="text-muted-foreground">/mês</span>
-              </div>
-
-              <ul className="space-y-3">
-                {PLANS.FREE.featureList.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm">
-                    <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline" className="w-full" disabled>
-                Plano Atual
-              </Button>
-            </CardFooter>
-          </Card>
-
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
           {/* PRO MONTHLY */}
           <Card className="relative border-primary shadow-lg">
             <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary">
               Mais Popular
             </Badge>
-            
+
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
                 <Crown className="h-5 w-5 text-amber-500" />
                 Creator Pro
               </CardTitle>
-              <CardDescription>Para crescer</CardDescription>
+              <CardDescription>Mensal</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-6">
@@ -139,7 +111,7 @@ export default function PricingPage() {
                   Plano Atual
                 </Button>
               ) : (
-                <Button 
+                <Button
                   className="w-full gap-2"
                   onClick={() => handleCheckout(STRIPE_PRICES.CREATOR_PRO_MONTHLY, 'month')}
                   disabled={loading === 'month'}
@@ -158,11 +130,11 @@ export default function PricingPage() {
           </Card>
 
           {/* PRO YEARLY */}
-          <Card className="relative">
-            <Badge className="absolute -top-3 left-1/2 -translate-x-1/2" variant="secondary">
-              Economize 28%
+          <Card className="relative border-2 border-green-500">
+            <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 hover:bg-green-600">
+              Economize 20%
             </Badge>
-            
+
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
                 <Crown className="h-5 w-5 text-amber-500" />
@@ -172,8 +144,11 @@ export default function PricingPage() {
             </CardHeader>
             <CardContent>
               <div className="mb-6">
-                <span className="text-4xl font-bold">R$ 249,90</span>
+                <span className="text-4xl font-bold">R$ 299,90</span>
                 <span className="text-muted-foreground">/ano</span>
+                <p className="text-sm text-green-600 font-medium mt-1">
+                  Economize R$ 59,00 por ano
+                </p>
               </div>
 
               <ul className="space-y-3">
@@ -191,9 +166,8 @@ export default function PricingPage() {
                   Plano Atual
                 </Button>
               ) : (
-                <Button 
-                  variant="outline"
-                  className="w-full gap-2"
+                <Button
+                  className="w-full gap-2 bg-green-600 hover:bg-green-700"
                   onClick={() => handleCheckout(STRIPE_PRICES.CREATOR_PRO_YEARLY, 'year')}
                   disabled={loading === 'year'}
                 >

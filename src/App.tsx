@@ -16,6 +16,10 @@ import SignUp from "./pages/auth/SignUp";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import CreatorOnboarding from "./pages/onboarding/CreatorOnboarding";
+import Segmentation from "./pages/onboarding/Segmentation";
+import PlanSelection from "./pages/onboarding/PlanSelection";
+import Checkout from "./pages/onboarding/Checkout";
+import Processing from "./pages/onboarding/Processing";
 import Shop from "./pages/creator/Shop";
 import ProductNew from "./pages/creator/ProductNew";
 import ProductEdit from "./pages/creator/ProductEdit";
@@ -78,6 +82,38 @@ const App = () => (
                   element={
                     <ProtectedRoute>
                       <CreatorOnboarding />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/onboarding/segmentation"
+                  element={
+                    <ProtectedRoute>
+                      <Segmentation />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/onboarding/plan"
+                  element={
+                    <ProtectedRoute>
+                      <PlanSelection />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/onboarding/checkout"
+                  element={
+                    <ProtectedRoute>
+                      <Checkout />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/onboarding/processing"
+                  element={
+                    <ProtectedRoute>
+                      <Processing />
                     </ProtectedRoute>
                   }
                 />

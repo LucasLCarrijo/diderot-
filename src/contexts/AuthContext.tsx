@@ -21,7 +21,7 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   userRoles: AppRole[];
-  signUp: (email: string, password: string, name?: string) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, name?: string, handle?: string, phone?: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // BroadcastChannel for logout sync across tabs
     let logoutChannel: BroadcastChannel | null = null;
-    
+
     try {
       logoutChannel = new BroadcastChannel(LOGOUT_CHANNEL);
       logoutChannel.onmessage = (event) => {
@@ -141,7 +141,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const expiresAt = session.expires_at * 1000;
         const now = Date.now();
         const timeUntilExpiry = expiresAt - now;
-        
+
         // Refresh if less than 5 minutes until expiry
         if (timeUntilExpiry < 5 * 60 * 1000 && timeUntilExpiry > 0) {
           refreshSession();
@@ -156,21 +156,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [fetchUserRoles, refreshSession, session?.expires_at]);
 
-  const signUp = async (email: string, password: string, name?: string) => {
+  const signUp = async (email: string, password: string, name?: string, handle?: string, phone?: string) => {
     const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
+
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: redirectUrl,
         data: {
           name: name || email.split("@")[0],
+          username: handle,
+          phone: phone,
         },
       },
     });
 
-    return { error: error as Error | null };
+    if (!authError && authData.user) {
+      // Manually create profile to ensure it exists for the onboarding flow
+      try {
+        await supabase.from("profiles").upsert({
+          id: authData.user.id,
+          name: name || email.split("@")[0],
+          username: handle || email.split("@")[0],
+          categories: [],
+        });
+      } catch (profileError) {
+        console.error("Error creating profile:", profileError);
+      }
+    }
+
+    return { error: authError as Error | null };
   };
 
   const signIn = async (email: string, password: string) => {
@@ -191,7 +207,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       // Ignore broadcast errors
     }
-    
+
     await supabase.auth.signOut();
     setUserRoles([]);
   };
@@ -272,13 +288,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .select("username, name, bio")
-          .eq("user_id", user.id)
+          .eq("id", user.id)
           .maybeSingle();
 
         if (profileError) throw profileError;
 
         if (!profile?.username || !profile?.name) {
-          return { error: new Error("Complete seu perfil antes de se tornar um Creator") };
+          const msg = "Complete seu perfil antes de se tornar um Creator";
+          toast.error(msg);
+          return { error: new Error(msg) };
         }
       }
 
@@ -303,8 +321,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await fetchUserRoles(user.id);
 
       toast.success(
-        newRole === "creator" 
-          ? "Parabéns! Você agora é um Creator!" 
+        newRole === "creator"
+          ? "Parabéns! Você agora é um Creator!"
           : "Role atualizada para Follower"
       );
       return { error: null };
@@ -318,14 +336,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const hasRole = (role: AppRole) => userRoles.includes(role);
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        user, 
-        session, 
-        isLoading, 
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        isLoading,
         userRoles,
-        signUp, 
-        signIn, 
+        signUp,
+        signIn,
         signOut,
         resetPassword,
         updatePassword,

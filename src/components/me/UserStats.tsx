@@ -10,65 +10,76 @@ export function UserStats() {
   const isCreator = hasRole("creator");
 
   const { data: stats, isLoading } = useQuery({
-    queryKey: ["user-stats", user?.id],
+    queryKey: ["user-stats", user?.id, isCreator],
     queryFn: async () => {
-      // Get favorites count
-      const { count: favoritesCount } = await supabase
-        .from("favorites")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user!.id);
+      if (!user?.id) return null;
 
-      // Get following count
-      const { count: followingCount } = await supabase
-        .from("follows")
-        .select("*", { count: "exact", head: true })
-        .eq("follower_id", user!.id);
+      // Run all queries in parallel for better performance
+      const [favoritesResult, followingResult, profileResult] = await Promise.all([
+        // Get favorites count
+        supabase
+          .from("favorites")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id),
+
+        // Get following count
+        supabase
+          .from("follows")
+          .select("*", { count: "exact", head: true })
+          .eq("follower_id", user.id),
+
+        // Get profile (using correct column: id, not user_id)
+        isCreator
+          ? supabase
+            .from("profiles")
+            .select("id")
+            .eq("id", user.id)  // ✅ FIX: profiles uses 'id', not 'user_id'
+            .maybeSingle()
+          : Promise.resolve({ data: null, error: null }),
+      ]);
 
       let creatorStats = null;
-      if (isCreator) {
-        // Get profile to find creator_id
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("user_id", user!.id)
-          .single();
 
-        if (profile) {
-          // Get products count
-          const { count: productsCount } = await supabase
+      if (isCreator && profileResult.data) {
+        // Run creator queries in parallel
+        const [productsCountResult, followersCountResult, productsDataResult] = await Promise.all([
+          supabase
             .from("products")
             .select("*", { count: "exact", head: true })
-            .eq("creator_id", profile.id);
+            .eq("creator_id", profileResult.data.id),
 
-          // Get followers count
-          const { count: followersCount } = await supabase
+          supabase
             .from("follows")
             .select("*", { count: "exact", head: true })
-            .eq("creator_id", profile.id);
+            .eq("creator_id", profileResult.data.id),
 
-          // Get total clicks
-          const { data: products } = await supabase
+          supabase
             .from("products")
             .select("click_count")
-            .eq("creator_id", profile.id);
+            .eq("creator_id", profileResult.data.id),
+        ]);
 
-          const totalClicks = products?.reduce((sum, p) => sum + (p.click_count || 0), 0) || 0;
+        const totalClicks = productsDataResult.data?.reduce(
+          (sum, p) => sum + (p.click_count || 0),
+          0
+        ) || 0;
 
-          creatorStats = {
-            productsCount: productsCount || 0,
-            followersCount: followersCount || 0,
-            totalClicks,
-          };
-        }
+        creatorStats = {
+          productsCount: productsCountResult.count || 0,
+          followersCount: followersCountResult.count || 0,
+          totalClicks,
+        };
       }
 
       return {
-        favoritesCount: favoritesCount || 0,
-        followingCount: followingCount || 0,
+        favoritesCount: favoritesResult.count || 0,
+        followingCount: followingResult.count || 0,
         creatorStats,
       };
     },
     enabled: !!user?.id,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
   });
 
   if (isLoading) {

@@ -25,16 +25,20 @@ export function useMyProfile() {
   return useQuery({
     queryKey: ["my-profile", user?.id],
     queryFn: async () => {
+      if (!user?.id) return null;
+
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("user_id", user!.id)
+        .eq("id", user.id)  // ✅ FIX: profiles uses 'id', not 'user_id'
         .maybeSingle();
 
       if (error) throw error;
       return data as UserProfile | null;
     },
     enabled: !!user?.id,
+    staleTime: 1000 * 60 * 2, // Cache for 2 minutes
+    gcTime: 1000 * 60 * 5, // Keep in cache for 5 minutes
   });
 }
 
@@ -44,11 +48,13 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: async (data: Partial<Omit<UserProfile, "id" | "user_id" | "created_at" | "updated_at">>) => {
+      if (!user?.id) throw new Error("User not authenticated");
+
       // Check if profile exists
       const { data: existingProfile } = await supabase
         .from("profiles")
         .select("id")
-        .eq("user_id", user!.id)
+        .eq("id", user.id)  // ✅ FIX: profiles uses 'id', not 'user_id'
         .maybeSingle();
 
       if (existingProfile) {
@@ -56,20 +62,20 @@ export function useUpdateProfile() {
         const { data: profile, error } = await supabase
           .from("profiles")
           .update(data)
-          .eq("user_id", user!.id)
+          .eq("id", user.id)  // ✅ FIX: profiles uses 'id', not 'user_id'
           .select()
           .single();
 
         if (error) throw error;
         return profile;
       } else {
-        // Create new profile
+        // Create new profile (this should rarely happen due to trigger)
         const { data: profile, error } = await supabase
           .from("profiles")
           .insert({
-            user_id: user!.id,
-            username: data.username || user!.email?.split("@")[0] || "user",
-            name: data.name || user!.user_metadata?.name || "Usuário",
+            id: user.id,  // ✅ FIX: Set id explicitly
+            username: data.username || user.email?.split("@")[0] || "user",
+            name: data.name || user.user_metadata?.name || "Usuário",
             ...data,
           })
           .select()

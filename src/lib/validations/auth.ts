@@ -24,18 +24,22 @@ export const signUpSchema = z.object({
     .min(1, { message: "Email é obrigatório" })
     .email({ message: "Email inválido" })
     .max(255, { message: "Email deve ter no máximo 255 caracteres" }),
+  handle: z
+    .string()
+    .min(3, { message: "Handle deve ter pelo menos 3 caracteres" })
+    .max(30, { message: "Handle deve ter no máximo 30 caracteres" })
+    .regex(/^[a-z0-9-]+$/, { message: "Apenas letras minúsculas, números e hífens" }),
+  phone: z
+    .string()
+    .min(10, { message: "Telefone inválido" }),
   password: z
     .string()
     .min(8, { message: "Senha deve ter pelo menos 8 caracteres" })
     .regex(/[A-Z]/, { message: "Senha deve ter pelo menos uma letra maiúscula" })
     .regex(/[0-9]/, { message: "Senha deve ter pelo menos um número" }),
-  confirmPassword: z.string(),
   acceptTerms: z
     .boolean()
     .refine((val) => val === true, { message: "Você deve aceitar os termos de uso" }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Senhas não coincidem",
-  path: ["confirmPassword"],
 });
 
 export const forgotPasswordSchema = z.object({
