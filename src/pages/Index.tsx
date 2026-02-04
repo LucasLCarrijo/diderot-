@@ -14,11 +14,11 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-// Image imports
-import heroImage from "@/assets/landing-hero.jpg";
-import card1Image from "@/assets/Sect1diderot.jpg";
-import card2Image from "@/assets/Sect2diderot.jpg";
-import card3Image from "@/assets/Sect3diderot.jpg";
+// Image imports - WebP optimized
+import heroImage from "@/assets/landing-hero.webp";
+import card1Image from "@/assets/Sect1diderot.webp";
+import card2Image from "@/assets/Sect2diderot.webp";
+import card3Image from "@/assets/Sect3diderot.webp";
 import midSectionImage from "@/assets/landing-mid-section.jpg";
 import finalSectionImage from "@/assets/landing-mid-section2.jpg";
 import categoryJeans from "@/assets/category-jeans.jpg";
