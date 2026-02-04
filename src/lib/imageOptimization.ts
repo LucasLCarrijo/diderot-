@@ -26,15 +26,33 @@ export function optimizeImage(
     const {
         width,
         height,
-        quality = 'auto',
-        format = 'auto',
+        quality = 80,
     } = options;
 
-    // For Supabase Storage URLs, apply transformations
+    // For Supabase Storage URLs, apply image transformations
+    // https://supabase.com/docs/guides/storage/serving/image-transformations
     if (url.includes('supabase.co/storage')) {
-        // Supabase doesn't have built-in transformations, return original
-        // In production, you'd proxy through Cloudinary or use Supabase Image Transformation
-        return url;
+        // If already has transformParams, skip
+        if (url.includes('/render/image')) {
+            return url;
+        }
+
+        // Convert public URL to transformation URL
+        // Format: /storage/v1/object/public/[bucket]/[path]
+        // To: /storage/v1/render/image/public/[bucket]/[path]?width=X&height=Y&quality=Q
+        const transformUrl = url.replace(
+            '/storage/v1/object/',
+            '/storage/v1/render/image/'
+        );
+
+        const params = new URLSearchParams();
+        if (width) params.set('width', String(width));
+        if (height) params.set('height', String(height));
+        params.set('quality', String(quality));
+        params.set('format', 'origin'); // Maintain original format or use 'webp' if supported
+
+        const separator = transformUrl.includes('?') ? '&' : '?';
+        return `${transformUrl.split('?')[0]}${separator}${params.toString()}`;
     }
 
     // For local development or static assets

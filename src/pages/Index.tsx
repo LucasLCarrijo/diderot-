@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, ChevronRight } from "lucide-react";
+import { optimizeImage } from "@/lib/imageOptimization";
 import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import logoLight from "@/assets/logo-diderot-white.svg";
@@ -206,7 +207,7 @@ export default function Index() {
                     <div className="aspect-square rounded-xl overflow-hidden bg-[#F5F5F5] mb-3">
                       {creator.avatar_url ? (
                         <img
-                          src={creator.avatar_url}
+                          src={optimizeImage(creator.avatar_url, { width: 200, height: 200, quality: 80 })}
                           alt={`Foto de ${creator.name || 'Creator'}`}
                           loading="lazy"
                           width={200}
@@ -480,7 +481,7 @@ export default function Index() {
             {/* Brand Column */}
             <div className="md:col-span-1">
               <Link to="/" className="inline-block">
-                <img src={logoLight} alt="Diderot" className="h-6 w-auto" />
+                <img src={logoLight} alt="Diderot" className="h-6 w-auto" width={80} height={24} />
               </Link>
               <p className="text-sm text-white/60 mt-3">
                 © 2024 Diderot ®

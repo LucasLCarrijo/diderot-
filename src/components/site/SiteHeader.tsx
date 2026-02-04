@@ -28,7 +28,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white shadow-sm">
       <div className="mx-auto flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 max-w-7xl">
         <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-          <img src={logoDark} alt="Diderot" className="h-6 w-auto" />
+          <img src={logoDark} alt="Diderot" className="h-6 w-auto" width={80} height={24} />
           <span className="sr-only">Diderot</span>
         </Link>
 
