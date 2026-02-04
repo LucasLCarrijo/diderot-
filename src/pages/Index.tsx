@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { optimizeImage } from "@/lib/imageOptimization";
-import { useState, useEffect } from "react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import logoLight from "@/assets/logo-diderot-white.svg";
 import {
@@ -46,12 +45,6 @@ const COLLECTIONS = [
 ];
 
 export default function Index() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
   // Fetch featured creators with caching
   const { data: featuredCreators } = useQuery({
     queryKey: ["featured-creators"],
@@ -85,8 +78,7 @@ export default function Index() {
         />
         <div className="absolute inset-0 bg-black/45" />
 
-        <div className={`relative z-10 h-full flex items-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}>
+        <div className="relative z-10 h-full flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-xl lg:max-w-[600px]">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-sans font-medium text-white leading-[1.1] tracking-[-0.02em] w-full max-w-full">
