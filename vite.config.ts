@@ -21,9 +21,9 @@ export default defineConfig(({ mode }) => ({
       output: {
         // Code splitting por vendor
         manualChunks: {
-          // React core
+          // React core - always needed
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          // UI components  
+          // UI components - used on most pages
           'ui-vendor': [
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
@@ -32,12 +32,10 @@ export default defineConfig(({ mode }) => ({
             '@radix-ui/react-select',
             '@radix-ui/react-tooltip',
           ],
-          // Data layer
+          // Data layer - needed for API calls
           'data-vendor': ['@tanstack/react-query', '@supabase/supabase-js'],
-          // Charts (lazy loaded pages only)
-          'charts': ['recharts'],
-          // Export tools (lazy loaded)
-          'export-tools': ['jspdf', 'jspdf-autotable', 'xlsx'],
+          // Note: recharts, jspdf, xlsx are NOT listed here
+          // They use dynamic imports and will be code-split automatically
         },
       },
     },
