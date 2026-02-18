@@ -188,7 +188,7 @@ export default function PricingPage() {
         {/* FAQ ou Benefícios adicionais */}
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            Todos os planos incluem teste grátis de 7 dias. Cancele quando quiser.
+            Todos os planos incluem 14 dias de teste grátis. Cancele quando quiser.
           </p>
         </div>
       </div>
