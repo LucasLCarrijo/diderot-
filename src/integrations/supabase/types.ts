@@ -833,6 +833,7 @@ export type Database = {
           instagram_url: string | null
           is_verified: boolean | null
           name: string
+          role: string
           tiktok_url: string | null
           updated_at: string
           user_id: string | null
@@ -849,6 +850,7 @@ export type Database = {
           instagram_url?: string | null
           is_verified?: boolean | null
           name: string
+          role?: string
           tiktok_url?: string | null
           updated_at?: string
           user_id?: string | null
@@ -865,6 +867,7 @@ export type Database = {
           instagram_url?: string | null
           is_verified?: boolean | null
           name?: string
+          role?: string
           tiktok_url?: string | null
           updated_at?: string
           user_id?: string | null
@@ -920,10 +923,12 @@ export type Database = {
           current_period_end: string
           current_period_start: string
           id: string
+          plan: string | null
           status: string
           stripe_customer_id: string
           stripe_price_id: string
           stripe_subscription_id: string
+          trial_end: string | null
           updated_at: string | null
           user_id: string
         }
@@ -933,10 +938,12 @@ export type Database = {
           current_period_end: string
           current_period_start: string
           id?: string
+          plan?: string | null
           status: string
           stripe_customer_id: string
           stripe_price_id: string
           stripe_subscription_id: string
+          trial_end?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -946,10 +953,12 @@ export type Database = {
           current_period_end?: string
           current_period_start?: string
           id?: string
+          plan?: string | null
           status?: string
           stripe_customer_id?: string
           stripe_price_id?: string
           stripe_subscription_id?: string
+          trial_end?: string | null
           updated_at?: string | null
           user_id?: string
         }

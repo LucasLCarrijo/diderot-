@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { 
-  CreditCard, 
-  Calendar, 
-  CheckCircle2, 
+import { useSearchParams } from 'react-router-dom';
+import {
+  CreditCard,
+  Calendar,
+  CheckCircle2,
   AlertCircle,
   ExternalLink,
-  Crown,
   Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,35 +13,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
-import { useSubscription } from '@/hooks/useSubscription';
+import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CreatorLayout } from '@/components/layout/CreatorLayout';
-import { SubscriptionBadge } from '@/components/subscription/SubscriptionBadge';
 
 export default function BillingPage() {
   const { session } = useAuth();
-  const { 
-    subscribed, 
-    isCreatorPro, 
-    subscriptionEnd, 
-    status,
-    cancelAtPeriodEnd,
-    isLoading, 
-    refreshSubscription 
-  } = useSubscription();
+  const { status, plan, periodEnd, loading } = useSubscriptionStatus();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const [portalLoading, setPortalLoading] = useState(false);
 
   useEffect(() => {
     if (searchParams.get('success') === 'true') {
       toast.success('Assinatura ativada com sucesso! Bem-vindo ao Creator Pro!');
-      refreshSubscription();
     }
-  }, [searchParams, refreshSubscription]);
+  }, [searchParams]);
 
   async function handleManageSubscription() {
     if (!session?.access_token) {
@@ -74,15 +62,20 @@ export default function BillingPage() {
     }
   }
 
-  const formattedEndDate = subscriptionEnd 
-    ? format(new Date(subscriptionEnd), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+  const formattedEndDate = periodEnd
+    ? format(periodEnd, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
     : null;
 
   const statusLabels: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
     active: { label: 'Ativa', variant: 'default' },
-    trialing: { label: 'Período de teste', variant: 'secondary' },
+    trialing: { label: 'Período de teste (14 dias)', variant: 'secondary' },
     past_due: { label: 'Pagamento atrasado', variant: 'destructive' },
     canceled: { label: 'Cancelada', variant: 'outline' },
+  };
+
+  const planLabels: Record<string, string> = {
+    monthly: 'Creator Pro — Mensal',
+    annual: 'Creator Pro — Anual',
   };
 
   return (
@@ -95,35 +88,22 @@ export default function BillingPage() {
           </p>
         </div>
 
-        {isLoading ? (
+        {loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : (
           <div className="space-y-6">
-            {/* Current Plan */}
+            {/* Current Subscription */}
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      Plano Atual
-                      <SubscriptionBadge tier={isCreatorPro ? 'creator_pro' : 'free'} />
-                    </CardTitle>
-                    <CardDescription>
-                      {isCreatorPro ? 'Você tem acesso a todos os recursos' : 'Recursos limitados'}
-                    </CardDescription>
-                  </div>
-                  {!isCreatorPro && (
-                    <Button onClick={() => navigate('/creator/pricing')}>
-                      <Crown className="h-4 w-4 mr-2" />
-                      Fazer Upgrade
-                    </Button>
-                  )}
-                </div>
+                <CardTitle>Assinatura Atual</CardTitle>
+                <CardDescription>
+                  {plan ? planLabels[plan] ?? 'Creator Pro' : 'Creator Pro'}
+                </CardDescription>
               </CardHeader>
-              
-              {isCreatorPro && subscriptionEnd && (
+
+              {periodEnd && (
                 <>
                   <Separator />
                   <CardContent className="pt-6">
@@ -131,15 +111,11 @@ export default function BillingPage() {
                       <div className="flex items-start gap-3">
                         <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium">
-                            {cancelAtPeriodEnd ? 'Expira em' : 'Próxima cobrança'}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {formattedEndDate}
-                          </p>
+                          <p className="text-sm font-medium">Próxima renovação</p>
+                          <p className="text-sm text-muted-foreground">{formattedEndDate}</p>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-start gap-3">
                         {status === 'active' || status === 'trialing' ? (
                           <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5" />
@@ -148,14 +124,9 @@ export default function BillingPage() {
                         )}
                         <div>
                           <p className="text-sm font-medium">Status</p>
-                          <Badge variant={statusLabels[status || 'active']?.variant || 'default'}>
-                            {statusLabels[status || 'active']?.label || status}
+                          <Badge variant={statusLabels[status || 'active']?.variant ?? 'default'}>
+                            {statusLabels[status || 'active']?.label ?? status}
                           </Badge>
-                          {cancelAtPeriodEnd && (
-                            <p className="text-xs text-muted-foreground mt-1">
-                              Cancelamento agendado
-                            </p>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -164,67 +135,36 @@ export default function BillingPage() {
               )}
             </Card>
 
-            {/* Manage Subscription */}
-            {isCreatorPro && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5" />
-                    Gerenciar Assinatura
-                  </CardTitle>
-                  <CardDescription>
-                    Atualize seu método de pagamento, altere seu plano ou cancele
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleManageSubscription}
-                    disabled={portalLoading}
-                    className="gap-2"
-                  >
-                    {portalLoading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <ExternalLink className="h-4 w-4" />
-                    )}
-                    Abrir Portal de Faturamento
-                  </Button>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Você será redirecionado para o portal seguro do Stripe
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Free Plan Info */}
-            {!isCreatorPro && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recursos do Plano Free</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
-                      Até 15 produtos
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
-                      Até 3 coleções
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
-                      10 posts por dia
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-primary" />
-                      Links de afiliado
-                    </li>
-                  </ul>
-                </CardContent>
-              </Card>
-            )}
+            {/* Portal */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CreditCard className="h-5 w-5" />
+                  Gerenciar Assinatura
+                </CardTitle>
+                <CardDescription>
+                  Atualize seu cartão, altere o plano ou cancele a qualquer momento
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  variant="outline"
+                  onClick={handleManageSubscription}
+                  disabled={portalLoading}
+                  className="gap-2"
+                >
+                  {portalLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <ExternalLink className="h-4 w-4" />
+                  )}
+                  Abrir Portal de Faturamento
+                </Button>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Você será redirecionado para o portal seguro do Stripe
+                </p>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>

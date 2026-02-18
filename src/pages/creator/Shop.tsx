@@ -23,6 +23,7 @@ import { ProductForm } from "@/components/creator/ProductForm";
 import { ProductFilters } from "@/components/creator/ProductFilters";
 import { BulkActionsBar } from "@/components/creator/BulkActionsBar";
 import { ProductLimitBanner } from "@/components/creator/ProductLimitBanner";
+import { SetupChecklist } from "@/components/dashboard/SetupChecklist";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { useProductFilters, ExtendedProductFilters } from "@/hooks/useProductFilters";
 import {
@@ -113,6 +114,21 @@ export default function Shop() {
   const bulkUpdate = useBulkUpdateProducts();
   const duplicateProduct = useDuplicateProduct();
   const exportProducts = useExportProducts();
+
+  // Fetch profile for setup checklist
+  const { data: profile } = useQuery({
+    queryKey: ["my-profile-shop", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from("profiles")
+        .select("username, avatar_url, bio")
+        .eq("id", user.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user?.id,
+  });
 
   // Fetch unique stores
   const { data: stores = [] } = useQuery({
@@ -352,6 +368,14 @@ export default function Shop() {
         </div>
       }
     >
+      {/* Setup Checklist */}
+      <SetupChecklist
+        username={profile?.username}
+        hasAvatar={!!profile?.avatar_url}
+        hasBio={!!profile?.bio}
+        hasProduct={(stats?.total ?? 0) > 0}
+      />
+
       {/* Product Limit Banner */}
       <ProductLimitBanner currentCount={productLimit.current} limit={productLimit.max} isPro={hasCreatorPro} />
 

@@ -71,7 +71,7 @@ export default function PricingPage() {
           </h1>
 
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Todos os planos incluem 7 dias de teste grátis. Cancele quando quiser.
+            Todos os planos incluem 14 dias de teste grátis. Cancele quando quiser.
           </p>
         </div>
 

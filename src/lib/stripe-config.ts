@@ -6,26 +6,6 @@ export const STRIPE_PRICES = {
 
 // Plan definitions
 export const PLANS = {
-  FREE: {
-    id: 'free',
-    name: 'Free',
-    price: 0,
-    interval: null,
-    features: {
-      maxProducts: 15,
-      maxCollections: 3,
-      maxPostsPerDay: 10,
-      analytics: false,
-      verifiedBadge: false,
-      prioritySupport: false,
-    },
-    featureList: [
-      'Até 15 produtos',
-      'Até 3 coleções',
-      '10 posts por dia',
-      'Links de afiliado',
-    ],
-  },
   CREATOR_PRO_MONTHLY: {
     id: 'creator_pro_monthly',
     name: 'Creator Pro',

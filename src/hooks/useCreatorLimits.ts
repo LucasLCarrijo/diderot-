@@ -76,19 +76,12 @@ export function useCreatorLimits() {
     enabled: !!profile?.id,
   });
 
-  const FREE_LIMITS = {
-    products: 15,
-    collections: 3,
-    postsPerDay: 10,
-  };
-
-  const PRO_LIMITS = {
+  // All active creators have unlimited access (subscription required to access dashboard)
+  const limits = {
     products: Infinity,
     collections: Infinity,
     postsPerDay: 50,
   };
-
-  const limits = hasCreatorPro ? PRO_LIMITS : FREE_LIMITS;
 
   const checkLimit = (type: 'products' | 'collections' | 'postsPerDay'): LimitCheckResult => {
     let current = 0;
