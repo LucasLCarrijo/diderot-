@@ -504,19 +504,19 @@ export default function CreatorOnboarding() {
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-sm">
                   <Check className="h-4 w-4 text-green-500" />
-                  <span>Crie até 15 produtos (Free)</span>
+                  <span>Produtos ilimitados</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
                   <Check className="h-4 w-4 text-green-500" />
-                  <span>Crie até 3 coleções (Free)</span>
+                  <span>Coleções ilimitadas</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
                   <Check className="h-4 w-4 text-green-500" />
                   <span>Monetize com afiliados</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                  <div className="h-4 w-4 rounded border" />
-                  <span>Analytics detalhado (Upgrade Pro)</span>
+                <div className="flex items-center gap-3 text-sm">
+                  <Check className="h-4 w-4 text-green-500" />
+                  <span>Analytics detalhado</span>
                 </div>
               </div>
             </div>

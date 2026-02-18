@@ -25,6 +25,8 @@ const Segmentation = lazy(() => import("./pages/onboarding/Segmentation"));
 const PlanSelection = lazy(() => import("./pages/onboarding/PlanSelection"));
 const Checkout = lazy(() => import("./pages/onboarding/Checkout"));
 const Processing = lazy(() => import("./pages/onboarding/Processing"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const Reactivate = lazy(() => import("./pages/Reactivate"));
 
 // Creator pages - lazy loaded
 const Shop = lazy(() => import("./pages/creator/Shop"));
@@ -105,6 +107,9 @@ const App = () => (
                   <Route path="/auth/reset-password" element={<ResetPassword />} />
 
                   {/* Onboarding routes */}
+                  <Route path="/onboarding" element={<Onboarding />} />
+                  <Route path="/reactivate" element={<ProtectedRoute><Reactivate /></ProtectedRoute>} />
+                  {/* Legacy onboarding routes - kept for backward compat */}
                   <Route path="/onboarding/creator" element={<ProtectedRoute><CreatorOnboarding /></ProtectedRoute>} />
                   <Route path="/onboarding/segmentation" element={<ProtectedRoute><Segmentation /></ProtectedRoute>} />
                   <Route path="/onboarding/plan" element={<ProtectedRoute><PlanSelection /></ProtectedRoute>} />

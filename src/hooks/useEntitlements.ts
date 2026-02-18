@@ -49,10 +49,7 @@ export function useEntitlements() {
   const hasCreatorPro = hasFeature('creator_pro');
 
   const getLimits = () => {
-    if (hasCreatorPro) {
-      return PLANS.CREATOR_PRO_MONTHLY.features;
-    }
-    return PLANS.FREE.features;
+    return PLANS.CREATOR_PRO_MONTHLY.features;
   };
 
   return {
