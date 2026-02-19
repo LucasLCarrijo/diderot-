@@ -25,7 +25,7 @@ export function UpgradePlanCard({ show = true }: UpgradePlanCardProps) {
           asChild
           className="w-full bg-[#111111] text-white hover:bg-black/90 rounded-full h-10"
         >
-          <Link to="/creator/pricing">
+          <Link to="/reactivate">
             <Sparkles className="h-4 w-4 mr-2" />
             Ver planos
           </Link>

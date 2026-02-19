@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Package, FolderOpen, Image, BarChart3, Users, Settings, ChevronLeft } from "lucide-react";
+import { Package, FolderOpen, Image, BarChart3, Users, Settings, ChevronLeft, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
@@ -9,6 +9,7 @@ const navigation = [
   { name: "Audiência", href: "/creator/audience", icon: Users },
   { name: "Analytics", href: "/creator/analytics", icon: BarChart3 },
   { name: "Configurações", href: "/creator/settings", icon: Settings },
+  { name: "Faturamento", href: "/creator/billing", icon: CreditCard },
 ];
 
 export function CreatorSidebar() {

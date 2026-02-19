@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts"
 import Stripe from 'https://esm.sh/stripe@18.5.0'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,7 +13,6 @@ const logStep = (step: string, details?: unknown) => {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -23,50 +22,43 @@ serve(async (req) => {
 
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
     if (!stripeKey) throw new Error('STRIPE_SECRET_KEY is not set');
-    logStep("Stripe key verified");
+    logStep("Stripe key verified", { keyPrefix: stripeKey.slice(0, 7) });
 
     const body = await req.json()
     const { priceId, returnUrl, cancelUrl } = body
     let { userId } = body
 
-    if (!priceId) {
-      throw new Error('Missing priceId')
-    }
+    if (!priceId) throw new Error('Missing priceId');
     logStep("Price ID received", { priceId });
 
-    // Derive userId from JWT if not provided in body
+    // Derive userId from JWT
+    const authHeader = req.headers.get('Authorization')
     if (!userId) {
-      const authHeader = req.headers.get('Authorization')
-      if (authHeader) {
-        const supabase = createClient(
-          Deno.env.get('SUPABASE_URL') ?? '',
-          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-          { auth: { persistSession: false } }
-        )
-        const token = authHeader.replace('Bearer ', '')
-        const { data: { user }, error: userError } = await supabase.auth.getUser(token)
-        if (userError) throw new Error(`Authentication error: ${userError.message}`)
-        userId = user?.id
-        logStep("User authenticated from token", { userId });
-      }
+      if (!authHeader) throw new Error('Missing Authorization header');
+      const supabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+        { auth: { persistSession: false } }
+      )
+      const token = authHeader.replace('Bearer ', '')
+      const { data: { user }, error: userError } = await supabase.auth.getUser(token)
+      if (userError) throw new Error(`Authentication error: ${userError.message}`)
+      if (!user) throw new Error('User not found for provided token')
+      userId = user.id
+      logStep("User authenticated from token", { userId });
     }
 
-    if (!userId) {
-      throw new Error('Missing userId — provide in body or via Authorization header')
-    }
+    if (!userId) throw new Error('Missing userId');
 
-    const stripe = new Stripe(stripeKey, {
-      apiVersion: '2025-08-27.basil' as Stripe.LatestApiVersion,
-    })
+    const stripe = new Stripe(stripeKey, { apiVersion: '2024-12-18.acacia' as Stripe.LatestApiVersion })
 
-    const origin = req.headers.get('origin') || 'https://diderot.com'
+    const origin = req.headers.get('origin') || 'https://shopdiderot.com'
     const successUrl = returnUrl ?? `${origin}/onboarding?success=true`
     const cancelUrlFinal = cancelUrl ?? `${origin}/onboarding`
 
-    logStep("Creating Stripe checkout session", { successUrl, cancelUrlFinal });
+    logStep("Creating Stripe checkout session", { priceId, userId, successUrl });
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'subscription',
       subscription_data: {
@@ -79,29 +71,23 @@ serve(async (req) => {
       metadata: { user_id: userId },
     })
 
-    logStep("Checkout session created", { sessionId: session.id });
+    logStep("Checkout session created", { sessionId: session.id, url: session.url });
 
     return new Response(
       JSON.stringify({ url: session.url }),
-      {
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        }
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in create-checkout", { message: errorMessage });
+    // Log Stripe-specific error details
+    if (error && typeof error === 'object' && 'type' in error) {
+      logStep("Stripe API ERROR", { type: (error as { type: string }).type, message: errorMessage });
+    } else {
+      logStep("ERROR in create-checkout", { message: errorMessage });
+    }
     return new Response(
       JSON.stringify({ error: errorMessage }),
-      {
-        status: 400,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        }
-      }
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 })

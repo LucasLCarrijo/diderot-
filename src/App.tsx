@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -20,11 +20,6 @@ const SearchPage = lazy(() => import("./pages/Search"));
 const CategoryDiscover = lazy(() => import("./pages/discover/Category"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
-const CreatorOnboarding = lazy(() => import("./pages/onboarding/CreatorOnboarding"));
-const Segmentation = lazy(() => import("./pages/onboarding/Segmentation"));
-const PlanSelection = lazy(() => import("./pages/onboarding/PlanSelection"));
-const Checkout = lazy(() => import("./pages/onboarding/Checkout"));
-const Processing = lazy(() => import("./pages/onboarding/Processing"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Reactivate = lazy(() => import("./pages/Reactivate"));
 
@@ -41,7 +36,7 @@ const Collections = lazy(() => import("./pages/creator/Collections"));
 const CollectionNew = lazy(() => import("./pages/creator/CollectionNew"));
 const CollectionEdit = lazy(() => import("./pages/creator/CollectionEdit"));
 const CreatorSettings = lazy(() => import("./pages/creator/Settings"));
-const Pricing = lazy(() => import("./pages/creator/Pricing"));
+// Pricing removed — subscribed creators use /creator/billing instead
 const Billing = lazy(() => import("./pages/creator/Billing"));
 
 // Public pages - lazy loaded
@@ -109,12 +104,12 @@ const App = () => (
                   {/* Onboarding routes */}
                   <Route path="/onboarding" element={<Onboarding />} />
                   <Route path="/reactivate" element={<ProtectedRoute><Reactivate /></ProtectedRoute>} />
-                  {/* Legacy onboarding routes - kept for backward compat */}
-                  <Route path="/onboarding/creator" element={<ProtectedRoute><CreatorOnboarding /></ProtectedRoute>} />
-                  <Route path="/onboarding/segmentation" element={<ProtectedRoute><Segmentation /></ProtectedRoute>} />
-                  <Route path="/onboarding/plan" element={<ProtectedRoute><PlanSelection /></ProtectedRoute>} />
-                  <Route path="/onboarding/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-                  <Route path="/onboarding/processing" element={<ProtectedRoute><Processing /></ProtectedRoute>} />
+                  {/* Legacy onboarding routes — redirect to unified flow */}
+                  <Route path="/onboarding/creator" element={<Navigate to="/onboarding" replace />} />
+                  <Route path="/onboarding/segmentation" element={<Navigate to="/onboarding" replace />} />
+                  <Route path="/onboarding/plan" element={<Navigate to="/onboarding" replace />} />
+                  <Route path="/onboarding/checkout" element={<Navigate to="/onboarding" replace />} />
+                  <Route path="/onboarding/processing" element={<Navigate to="/onboarding" replace />} />
 
                   {/* Creator routes */}
                   <Route path="/creator/shop" element={<ProtectedRoute requiredRole="creator"><Shop /></ProtectedRoute>} />
@@ -129,7 +124,7 @@ const App = () => (
                   <Route path="/creator/collections/new" element={<ProtectedRoute requiredRole="creator"><CollectionNew /></ProtectedRoute>} />
                   <Route path="/creator/collections/:id/edit" element={<ProtectedRoute requiredRole="creator"><CollectionEdit /></ProtectedRoute>} />
                   <Route path="/creator/settings" element={<ProtectedRoute requiredRole="creator"><CreatorSettings /></ProtectedRoute>} />
-                  <Route path="/creator/pricing" element={<ProtectedRoute requiredRole="creator"><Pricing /></ProtectedRoute>} />
+                  <Route path="/creator/pricing" element={<Navigate to="/creator/billing" replace />} />
                   <Route path="/creator/billing" element={<ProtectedRoute requiredRole="creator"><Billing /></ProtectedRoute>} />
 
                   {/* Public content routes */}

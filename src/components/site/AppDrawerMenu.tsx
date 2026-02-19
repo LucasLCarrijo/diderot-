@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Home,
   Rss,
   Heart,
   User,
@@ -16,6 +15,7 @@ import {
   BarChart3,
   ChevronDown,
   ExternalLink,
+  CreditCard,
 } from "lucide-react";
 import { SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,7 @@ const CREATOR_NAV = [
   { name: "Audiência", href: "/creator/audience", icon: Users },
   { name: "Analytics", href: "/creator/analytics", icon: BarChart3 },
   { name: "Configurações", href: "/creator/settings", icon: Settings },
+  { name: "Faturamento", href: "/creator/billing", icon: CreditCard },
 ];
 
 export function AppDrawerMenu({
@@ -160,7 +161,7 @@ export function AppDrawerMenu({
               {!isCreator ? (
                 <SheetClose asChild>
                   <Link
-                    to="/onboarding/segmentation"
+                    to="/onboarding"
                     className="flex items-center gap-3 py-2.5 px-3 rounded-lg transition-colors text-muted-foreground hover:bg-muted hover:text-foreground"
                   >
                     <Sparkles className="h-5 w-5" />
