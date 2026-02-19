@@ -8,7 +8,7 @@ function cleanPriceId(raw: string | undefined, fallback: string): string {
 // Stripe Price IDs
 export const STRIPE_PRICES = {
   CREATOR_PRO_MONTHLY: cleanPriceId(import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID, 'price_1SfM5cKjrStn4RhpDmL1KYxa'),
-  CREATOR_PRO_YEARLY: cleanPriceId(import.meta.env.VITE_STRIPE_ANNUAL_PRICE_ID, 'price_1Sj20nKjrStn4RhptVBDGbQV'),
+  CREATOR_PRO_YEARLY: cleanPriceId(import.meta.env.VITE_STRIPE_ANNUAL_PRICE_ID, 'price_1Sww7rKjrStn4Rhp5BPxrbLR'),
 } as const;
 
 // Plan definitions
