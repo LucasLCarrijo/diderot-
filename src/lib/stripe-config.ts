@@ -1,7 +1,14 @@
+// Strip "VAR_NAME=" prefix if someone pasted the full .env line as the value
+function cleanPriceId(raw: string | undefined, fallback: string): string {
+  const val = raw || fallback;
+  const eq = val.indexOf('=');
+  return eq !== -1 && !val.startsWith('price_') ? val.slice(eq + 1) : val;
+}
+
 // Stripe Price IDs
 export const STRIPE_PRICES = {
-  CREATOR_PRO_MONTHLY: import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID || 'price_1SfM5cKjrStn4RhpDmL1KYxa',
-  CREATOR_PRO_YEARLY: import.meta.env.VITE_STRIPE_ANNUAL_PRICE_ID || 'price_1Sj20nKjrStn4RhptVBDGbQV',
+  CREATOR_PRO_MONTHLY: cleanPriceId(import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID, 'price_1SfM5cKjrStn4RhpDmL1KYxa'),
+  CREATOR_PRO_YEARLY: cleanPriceId(import.meta.env.VITE_STRIPE_ANNUAL_PRICE_ID, 'price_1Sj20nKjrStn4RhptVBDGbQV'),
 } as const;
 
 // Plan definitions
