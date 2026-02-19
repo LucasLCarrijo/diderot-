@@ -179,7 +179,15 @@ export default function Onboarding() {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      if (error) throw error;
+      if (error) {
+        // Extract the real error message from the response body
+        let errorMessage = error.message;
+        try {
+          const body = await (error as { context?: Response }).context?.json?.();
+          if (body?.error) errorMessage = body.error;
+        } catch {}
+        throw new Error(errorMessage);
+      }
       if (data?.url) {
         window.location.href = data.url;
       } else {
